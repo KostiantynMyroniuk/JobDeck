@@ -26,12 +26,12 @@ namespace JobApplication.API.Controllers
 
             return Ok(items);
         }
- 
+
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<ApplicationDto>> GetByIdAsync([FromQuery] Guid id)
         {
             var result = await _mediator.Send(new GetApplicationByIdQuery(id));
-            
+
             return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
         }
 
@@ -49,6 +49,15 @@ namespace JobApplication.API.Controllers
             await _mediator.Send(new DeleteApplicationCommand(id));
 
             return NoContent();
+        }
+
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateAsync([FromQuery] Guid id, [FromBody] UpdateApplicationCommand command)
+        {
+            
+            var result = await _mediator.Send(command with { Id = id });
+
+            return result.IsSuccess ? NoContent() : NotFound(result.Error);
         }
     }
 }
