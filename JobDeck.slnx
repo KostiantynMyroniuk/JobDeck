@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
+  <Project Path="src/JobApplication.API/JobApplication.API.csproj" Id="3236ba13-c853-45af-8b1b-5a6da64bc30e" />
+  <Project Path="src/Shared/Shared.csproj" Id="adc807a1-781a-4709-82cc-e3b9f185fb75" />
+</Solution>

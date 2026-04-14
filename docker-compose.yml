@@ -1,0 +1,6 @@
+services:
+  jobapplication.api:
+    image: ${DOCKER_REGISTRY-}jobapplicationapi
+    build:
+      context: .
+      dockerfile: src/JobApplication.API/Dockerfile
