@@ -4,6 +4,7 @@ using JobApplication.API.Features;
 using JobApplication.API.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace JobApplication.API.Extensions
 {
@@ -11,7 +12,12 @@ namespace JobApplication.API.Extensions
     {
         public static void AddConfiguration(this IHostApplicationBuilder builder)
         {
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters
+                    .Add(new JsonStringEnumConverter());
+                });
 
             builder.Services.AddOpenApi();
 
@@ -34,13 +40,13 @@ namespace JobApplication.API.Extensions
             builder.Services.AddValidatorsFromAssembly(typeof(Program).Assembly);
         }
 
-        public static void AddMigrations(this IHostApplicationBuilder builder)
+        public static async Task MigrateDatabaseAsync(this WebApplication app)
         {
-            using var scope = builder.Services.BuildServiceProvider().CreateScope();
+            var scope = app.Services.CreateScope();
 
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-            context.Database.Migrate();
+            await context.Database.MigrateAsync();
         }
     }
 }

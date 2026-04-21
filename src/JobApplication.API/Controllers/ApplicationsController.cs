@@ -20,15 +20,18 @@ namespace JobApplication.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PaginatedList<ApplicationDto>>> GetAllAsync([FromQuery] int pageNumber, [FromQuery] int pageSize)
+        public async Task<ActionResult<PaginatedList<ApplicationDto>>> GetAllAsync(
+            [FromQuery] ApplicationStatus? status,
+            [FromQuery] int pageNumber,
+            [FromQuery] int pageSize)
         {
-            var items = await _mediator.Send(new GetAllApplicationsQuery(pageNumber, pageSize));
+            var items = await _mediator.Send(new GetAllApplicationsQuery(status, pageNumber, pageSize));
 
             return Ok(items);
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<ApplicationDto>> GetByIdAsync([FromQuery] Guid id)
+        public async Task<ActionResult<ApplicationDto>> GetByIdAsync([FromRoute] Guid id)
         {
             var result = await _mediator.Send(new GetApplicationByIdQuery(id));
 
@@ -36,7 +39,7 @@ namespace JobApplication.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<CreatedAtActionResult>> CreateAsync([FromBody] CreateApplicationCommand command)
+        public async Task<IActionResult> CreateAsync([FromBody] CreateApplicationCommand command)
         {
             var result = await _mediator.Send(command);
 
@@ -52,7 +55,7 @@ namespace JobApplication.API.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateAsync([FromQuery] Guid id, [FromBody] UpdateApplicationCommand command)
+        public async Task<IActionResult> UpdateAsync([FromRoute] Guid id, [FromBody] UpdateApplicationCommand command)
         {
             
             var result = await _mediator.Send(command with { Id = id });

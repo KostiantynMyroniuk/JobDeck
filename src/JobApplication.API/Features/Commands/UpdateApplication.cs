@@ -20,14 +20,10 @@ namespace JobApplication.API.Features.Commands
     public class UpdateApplicationCommandHandler : IRequestHandler<UpdateApplicationCommand, Result>
     {
         private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
 
-        public UpdateApplicationCommandHandler(
-            ApplicationDbContext context,
-            IMapper mapper)
+        public UpdateApplicationCommandHandler(ApplicationDbContext context)
         {
             _context = context;
-            _mapper = mapper;
         }
 
         public async Task<Result> Handle(UpdateApplicationCommand request, CancellationToken cancellationToken)
@@ -38,7 +34,13 @@ namespace JobApplication.API.Features.Commands
             if (application == null)
                 return Result.Failure("404", $"Application with ID {request.Id} not found.");
 
-            _mapper.Map(request, application);
+            application.Update(
+                request.CompanyName,
+                request.Position,
+                request.JobUrl,
+                request.Notes
+            );
+
             await _context.SaveChangesAsync(cancellationToken);
 
             return Result.Success();

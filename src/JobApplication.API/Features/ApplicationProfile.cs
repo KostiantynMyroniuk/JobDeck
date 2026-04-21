@@ -9,9 +9,6 @@ namespace JobApplication.API.Features
         public ApplicationProfile() 
         {
             CreateMap<Application, ApplicationDto>();
-
-            CreateMap<UpdateApplicationCommand, Application>()
-                .ForMember(dest => dest.Id, opt => opt.Ignore());
         }
     }
 }

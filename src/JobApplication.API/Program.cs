@@ -4,9 +4,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddConfiguration();
 
-builder.AddMigrations();
-
 var app = builder.Build();
+
+await app.MigrateDatabaseAsync();
 
 if (app.Environment.IsDevelopment())
 {

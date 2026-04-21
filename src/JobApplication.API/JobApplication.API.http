@@ -1,6 +1,23 @@
-@JobApplication.API_HostAddress = http://localhost:5136
+@JobApplication.API_HostAddress = http://localhost:62395
 
 GET {{JobApplication.API_HostAddress}}/weatherforecast/
 Accept: application/json
+
+###
+
+POST {{JobApplication.API_HostAddress}}/api/applications
+Content-Type: application/json
+
+{
+  "companyName": "EPAM",
+  "position": "Junior .NET Developer",
+  "notes": "Backend ASP.NET Core, EF Core, MSSQL, Redis, RabbitMq"
+}
+
+###
+
+@pageNumber=1
+@pageSize=5
+GET {{JobApplication.API_HostAddress}}/api/applications?pageNumber={{pageNumber}}&pageSize={{pageSize}}
 
 ###

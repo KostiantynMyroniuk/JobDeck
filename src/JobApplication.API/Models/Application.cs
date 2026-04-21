@@ -34,15 +34,16 @@
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void UpdateStatus(ApplicationStatus newStatus, DateTime? interviewDate = null)
+        public void Update(
+            string companyName, 
+            string position, 
+            string? jobUrl, 
+            string? notes)
         {
-            Status = newStatus;
-            UpdatedAt = DateTime.UtcNow;
-        }
-
-        public void InterviewScheduled(DateTime interviewDate)
-        {
-            InterviewDate = interviewDate;
+            CompanyName = companyName;
+            Position = position;
+            JobUrl = jobUrl;
+            Notes = notes;
             UpdatedAt = DateTime.UtcNow;
         }
     }

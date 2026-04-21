@@ -9,6 +9,7 @@ using Shared.Models;
 namespace JobApplication.API.Features.Queries
 {
     public record GetAllApplicationsQuery(
+        ApplicationStatus? Status,
         int PageNumber,
         int PageSize
     ) : IRequest<PaginatedList<ApplicationDto>>;
@@ -34,6 +35,9 @@ namespace JobApplication.API.Features.Queries
             var query = _context.Applications.AsNoTracking();
 
             var count = await query.CountAsync(cancellationToken);
+
+            if (request.Status.HasValue)
+                query.Where(a => a.Status == request.Status);
 
             var items = await query
                 .Skip((pageNumber - 1) * pageSize)
