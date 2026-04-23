@@ -1,11 +1,23 @@
 services:
   jobapplication.api:
     image: ${DOCKER_REGISTRY-}jobapplicationapi
-    environment:
-      ConnectionStrings__DefaultConnection: "Server=mssql-db,1433;Database=JobApplicationsDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;"
     build:
       context: .
       dockerfile: src/JobApplication.API/Dockerfile
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=mssql-db,1433;Database=JobApplicationsDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;"
+    depends_on:
+      - mssql-db
+
+  resume.api:
+    image: ${DOCKER_REGISTRY-}resumeapi
+    build:
+      context: .
+      dockerfile: src/Resume.API/Dockerfile
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=mssql-db,1433;Database=ResumeDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;"
+    env_file:
+      - .env
     depends_on:
       - mssql-db
 
@@ -16,3 +28,4 @@ services:
       ACCEPT_EULA: "Y"
     ports:
       - "1433:1433"
+

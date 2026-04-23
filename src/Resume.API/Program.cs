@@ -1,4 +1,4 @@
-using JobApplication.API.Extensions;
+using Resume.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
