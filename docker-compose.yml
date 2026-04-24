@@ -16,6 +16,8 @@ services:
       dockerfile: src/Resume.API/Dockerfile
     environment:
       ConnectionStrings__DefaultConnection: "Server=mssql-db,1433;Database=ResumeDb;User Id=sa;Password=${DB_PASSWORD};TrustServerCertificate=True;"
+    ports:
+      - "5001:8080"
     env_file:
       - .env
     depends_on:

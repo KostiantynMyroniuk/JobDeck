@@ -11,7 +11,7 @@ namespace Resume.API.Services.Azure
             _blobServiceClient = blobServiceClient;
         }
 
-        public async Task<string> UploadFileAsync(IFormFile file, string containerName, CancellationToken ct = default)
+        public async Task<(string fileUrl, string fileName)> UploadFileAsync(IFormFile file, string containerName, CancellationToken ct = default)
         {
             var container = _blobServiceClient.GetBlobContainerClient(containerName);
             await container.CreateIfNotExistsAsync(cancellationToken: ct);
@@ -22,7 +22,7 @@ namespace Resume.API.Services.Azure
             await using var stream = file.OpenReadStream();
             await blob.UploadAsync(stream, cancellationToken: ct);
 
-            return blob.Uri.ToString();
+            return (blob.Uri.ToString(), fileName);
         }
 
         public async Task<Stream> DownloadFileAsync(string fileName, string containerName, CancellationToken ct = default)
@@ -32,6 +32,14 @@ namespace Resume.API.Services.Azure
             var download = await blob.DownloadAsync(cancellationToken: ct);
 
             return download.Value.Content;
+        }
+
+        public async Task DeleteFileAsync(string fileName, string containerName, CancellationToken ct = default)
+        {
+            var container = _blobServiceClient.GetBlobContainerClient(containerName);
+            var blob = container.GetBlobClient(fileName);
+
+            await blob.DeleteIfExistsAsync(cancellationToken: ct);
         }
     }
 }

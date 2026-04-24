@@ -7,32 +7,49 @@ namespace Resume.API.Features.Commands
 {
     public record UploadFileCommand(
         Guid ApplicationId,
-        IFormFile FIle
+        IFormFile File
     ) : IRequest<string>;
 
     public class UploadFileCommandHandler : IRequestHandler<UploadFileCommand, string>
     {
         private readonly ApplicationDbContext _context;
         private readonly IFileStorage _fileStorage;
+        private readonly IConfiguration _configuration;
 
-        public UploadFileCommandHandler(ApplicationDbContext context, IFileStorage fileStorage)
+        public UploadFileCommandHandler(
+            ApplicationDbContext context, 
+            IFileStorage fileStorage, 
+            IConfiguration configuration
+        )
         {
             _context = context;
             _fileStorage = fileStorage;
+            _configuration = configuration;
         }
 
         public async Task<string> Handle(UploadFileCommand request, CancellationToken cancellationToken)
         {
-            var file = request.FIle;
+            var containerName = _configuration["AzureStorage:ContainerName"];
 
-            //later
+            var response = await _fileStorage.UploadFileAsync(request.File, containerName, cancellationToken);
+
             try
             {
-                return await _fileStorage.UploadFileAsync(file, "jobdeckresumes", cancellationToken);
+                var userResume = new UserResume(
+                    request.File.FileName,
+                    response.fileName,
+                    request.ApplicationId
+                );
+
+                _context.UserResumes.Add(userResume);
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return response.fileUrl;
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception("An error occurred while uploading the file.", ex);
+                await _fileStorage.DeleteFileAsync(response.fileName, containerName, cancellationToken);
+                throw;
             }
         }
     }

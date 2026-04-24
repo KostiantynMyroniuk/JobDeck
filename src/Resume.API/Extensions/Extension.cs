@@ -1,5 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 using Resume.API.Infrastructure;
 using Resume.API.Services.Azure;
 
@@ -11,8 +12,6 @@ namespace Resume.API.Extensions
         {
             builder.Services.AddControllers();
 
-            builder.Services.AddOpenApi();
-
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -23,7 +22,10 @@ namespace Resume.API.Extensions
                 cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
             });
 
-            builder.Services.AddSingleton(new BlobServiceClient(builder.Configuration["AZURE_STORAGE_CONNECTION_STRING"]));
+            builder.Services.AddAzureClients(clientBuilder =>
+            {
+                clientBuilder.AddBlobServiceClient(builder.Configuration["AZURE_STORAGE_CONNECTION_STRING"]);
+            });
 
             builder.Services.AddScoped<IFileStorage, FileStorage>();
         }
