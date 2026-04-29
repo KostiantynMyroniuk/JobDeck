@@ -27,8 +27,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Queries\" />
     <Folder Include="wwwroot\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
 </Project>

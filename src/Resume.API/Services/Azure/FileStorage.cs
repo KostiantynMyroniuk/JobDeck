@@ -1,4 +1,6 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
+using Azure.Storage.Sas;
 
 namespace Resume.API.Services.Azure
 {
@@ -13,6 +15,11 @@ namespace Resume.API.Services.Azure
 
         public async Task<(string fileUrl, string fileName)> UploadFileAsync(IFormFile file, string containerName, CancellationToken ct = default)
         {
+            var blobHeader = new BlobHttpHeaders
+            {
+                ContentType = "application/pdf"
+            };
+
             var container = _blobServiceClient.GetBlobContainerClient(containerName);
             await container.CreateIfNotExistsAsync(cancellationToken: ct);
 
@@ -20,18 +27,27 @@ namespace Resume.API.Services.Azure
             var blob = container.GetBlobClient(fileName);
 
             await using var stream = file.OpenReadStream();
-            await blob.UploadAsync(stream, cancellationToken: ct);
+            await blob.UploadAsync(
+                stream, 
+                new BlobUploadOptions { HttpHeaders = blobHeader }, 
+                cancellationToken: ct
+            );
 
             return (blob.Uri.ToString(), fileName);
         }
 
-        public async Task<Stream> DownloadFileAsync(string fileName, string containerName, CancellationToken ct = default)
+        public string GetFileUrl(string fileName, string containerName, CancellationToken ct = default)
         {
             var container = _blobServiceClient.GetBlobContainerClient(containerName);
-            var blob = container.GetBlobClient(fileName);
-            var download = await blob.DownloadAsync(cancellationToken: ct);
 
-            return download.Value.Content;
+            var blob = container.GetBlobClient(fileName);
+
+            var url = blob.GenerateSasUri(
+                BlobSasPermissions.Read,
+                DateTimeOffset.UtcNow.AddMinutes(15)
+            );
+
+            return url.ToString();
         }
 
         public async Task DeleteFileAsync(string fileName, string containerName, CancellationToken ct = default)

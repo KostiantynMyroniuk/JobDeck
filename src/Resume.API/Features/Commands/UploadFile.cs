@@ -31,6 +31,9 @@ namespace Resume.API.Features.Commands
         {
             var containerName = _configuration["AzureStorage:ContainerName"];
 
+            if (containerName == null)
+                throw new InvalidOperationException("Azure Storage container name is not configured.");
+
             var response = await _fileStorage.UploadFileAsync(request.File, containerName, cancellationToken);
 
             try

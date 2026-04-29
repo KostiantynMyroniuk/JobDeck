@@ -2,6 +2,7 @@
 {
     public class ApplicationDto
     {
+        public Guid Id { get; init; }
         public string CompanyName { get; init; }
         public string Position { get; init; }
         public string? JobUrl { get; init; }
