@@ -1,8 +1,12 @@
 ﻿using Azure.Storage.Blobs;
+using MediatR;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
+using Resume.API.Behaviors;
 using Resume.API.Infrastructure;
 using Resume.API.Services.Azure;
+using System.ComponentModel.DataAnnotations;
 
 namespace Resume.API.Extensions
 {
@@ -20,6 +24,7 @@ namespace Resume.API.Extensions
             builder.Services.AddMediatR(cfg =>
             {
                 cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+                cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             });
 
             builder.Services.AddAzureClients(clientBuilder =>
@@ -32,7 +37,7 @@ namespace Resume.API.Extensions
 
         public static async Task MigrateDatabaseAsync(this WebApplication app)
         {
-            var scope = app.Services.CreateScope();
+            using var scope = app.Services.CreateScope();
 
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 

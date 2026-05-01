@@ -37,7 +37,7 @@ namespace JobApplication.API.Features.Queries
             var count = await query.CountAsync(cancellationToken);
 
             if (request.Status.HasValue)
-                query.Where(a => a.Status == request.Status);
+                query = query.Where(a => a.Status == request.Status);
 
             var items = await query
                 .Skip((pageNumber - 1) * pageSize)

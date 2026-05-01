@@ -38,7 +38,9 @@ namespace JobApplication.API.Features.Commands
                 request.CompanyName,
                 request.Position,
                 request.JobUrl,
-                request.Notes
+                request.Notes,
+                request.Status,
+                request.InterviewDate
             );
 
             await _context.SaveChangesAsync(cancellationToken);

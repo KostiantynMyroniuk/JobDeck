@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using MediatR;
 
-namespace JobApplication.API.Behaviors
+namespace Resume.API.Behaviors
 {
     public class ValidationBehavior<TRequest, TResponse>
         : IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
@@ -14,7 +14,7 @@ namespace JobApplication.API.Behaviors
         }
 
         public async Task<TResponse> Handle(
-            TRequest request, 
+            TRequest request,
             RequestHandlerDelegate<TResponse> next,
             CancellationToken cancellationToken
         )

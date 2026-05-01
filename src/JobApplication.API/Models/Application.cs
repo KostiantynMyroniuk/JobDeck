@@ -20,7 +20,8 @@
             string companyName,
             string position,
             string? jobUrl = null,
-            string? notes = null)
+            string? notes = null
+        )
         {
             Id = Guid.NewGuid();
             CompanyName = companyName;
@@ -38,13 +39,18 @@
             string companyName, 
             string position, 
             string? jobUrl, 
-            string? notes)
+            string? notes,
+            ApplicationStatus status,
+            DateTime? interviewDate
+        )
         {
             CompanyName = companyName;
             Position = position;
             JobUrl = jobUrl;
             Notes = notes;
             UpdatedAt = DateTime.UtcNow;
+            Status = status;
+            InterviewDate = interviewDate;
         }
     }
 }

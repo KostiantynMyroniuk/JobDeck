@@ -42,7 +42,7 @@ namespace JobApplication.API.Extensions
 
         public static async Task MigrateDatabaseAsync(this WebApplication app)
         {
-            var scope = app.Services.CreateScope();
+            using var scope = app.Services.CreateScope();
 
             var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 

@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using JobApplication.API.Models;
 
 namespace JobApplication.API.Features.Commands
 {
@@ -25,6 +26,11 @@ namespace JobApplication.API.Features.Commands
             RuleFor(x => x.Status)
                 .NotEmpty().WithMessage("Status is required.")
                 .IsInEnum().WithMessage("Status must be a valid application status.");
+
+            RuleFor(x => x.InterviewDate)
+                .NotNull().WithMessage("Interview date is required when status is Interview.")
+                .GreaterThan(DateTime.UtcNow).WithMessage("Interview date must be in the future.")
+                .When(x => x.Status == ApplicationStatus.Interview);
 
         }
     }
